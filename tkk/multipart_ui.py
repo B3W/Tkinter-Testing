@@ -39,11 +39,44 @@ class SideBar(ttk.Frame):
         ttk.Frame.__init__(self, master, *args, **kwargs)
         self.master = master
 
-        self.pack(fill=tk.BOTH, expand=True)  # Let widgets occupy entire frame
+        self.pack(fill=tk.BOTH)  # Let widgets occupy entire frame
         self.__create_sidebar()
 
     def __create_sidebar(self):
-        pass
+        # Create vertical scroll bar
+        self.yscroller = ttk.Scrollbar(master=self, orient=tk.VERTICAL)
+        self.yscroller.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Create list box with scrollbar
+        self.item_list = tk.Listbox(master=self,
+                                    yscrollcommand=self.yscroller.set,
+                                    selectmode=tk.BROWSE)
+
+        self.item_list.pack(side=tk.LEFT, fill=tk.BOTH)
+        self.item_list.bind('<<ListboxSelect>>', SideBar.__on_select)
+
+        # Link vertical scrollbar to listbox
+        self.yscroller.configure(command=self.item_list.yview)
+
+        # Populate list box
+        for i in range(50):
+            self.item_list.insert(tk.END, 'ITEM %d' % i)
+
+    # CALLBACKS
+    def __on_select(event):
+        listbox = event.widget  # Event contains Listbox
+        index = int(listbox.curselection()[0])  # Get selection
+        value = listbox.get(index)
+        print('Selected \'%s\' at index \'%d\'' % (value, index))
+
+
+class MainArea(ttk.Frame):
+    def __init__(self, master, *args, **kwargs):
+        # Initialize frame
+        ttk.Frame.__init__(self, master, *args, **kwargs)
+        self.master = master
+
+        self.pack(fill=tk.BOTH, expand=True)  # Let widgets occupy entire frame
 
 
 class MainUI(ttk.Frame):
@@ -51,7 +84,7 @@ class MainUI(ttk.Frame):
         # Initialize root window
         ttk.Frame.__init__(self, master, *args, **kwargs)
         self.master = master
-        self.master.title('UI w/ Binding')
+        self.master.title('Multipart UI')
 
         # Center window
         self.master.eval('tk::PlaceWindow %s center'
@@ -67,12 +100,14 @@ class MainUI(ttk.Frame):
         self.menu_bar = MenuBar(self.master, self.__window_close_callback)
         self.master.configure(menu=self.menu_bar)
         self.side_bar = SideBar(self)
+        self.main_area = MainArea(self)
 
         # Register event handlers for root window
         self.__register_handlers()
 
         # TODO Place components in the main window
         self.side_bar.pack(side=tk.LEFT, fill=tk.Y)
+        self.main_area.pack(side=tk.RIGHT, fill=tk.BOTH)
 
     def __register_handlers(self):
         # Handler for window close request
