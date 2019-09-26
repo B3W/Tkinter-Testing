@@ -126,7 +126,6 @@ class MainUI(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
         # Used for configuring styles/themes
         self.style = ttk.Style()
-        self.available_themes = self.style.theme_names()
 
         # Initialize root window
         ttk.Frame.__init__(self, master, *args, **kwargs)
