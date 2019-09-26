@@ -43,6 +43,13 @@ class SideBar(ttk.Frame):
         self.__create_sidebar()
 
     def __create_sidebar(self):
+        # Listbox label
+        self.item_label = ttk.Label(master=self,
+                                    text='Listbox',
+                                    style='DarkHeading.TLabel')
+
+        self.item_label.pack(side=tk.TOP, fill=tk.X)
+
         # Create vertical scroll bar
         self.yscroller = ttk.Scrollbar(master=self, orient=tk.VERTICAL)
         self.yscroller.pack(side=tk.RIGHT, fill=tk.Y)
@@ -50,7 +57,11 @@ class SideBar(ttk.Frame):
         # Create list box with scrollbar
         self.item_list = tk.Listbox(master=self,
                                     yscrollcommand=self.yscroller.set,
-                                    selectmode=tk.BROWSE)
+                                    selectmode=tk.BROWSE,
+                                    bg='#2B2B2B', fg='#FFFFFF',
+                                    relief=tk.FLAT, bd=0,
+                                    highlightthickness=0,
+                                    activestyle=tk.NONE)
 
         self.item_list.pack(side=tk.LEFT, fill=tk.BOTH)
         self.item_list.bind('<<ListboxSelect>>', SideBar.__on_select)
@@ -81,8 +92,13 @@ class MainArea(ttk.Frame):
 
 class MainUI(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
+        # Used for configuring styles
+        self.style = ttk.Style()
+        self.__configure_styles()
+
         # Initialize root window
         ttk.Frame.__init__(self, master, *args, **kwargs)
+        self.configure(style='DarkMain.TFrame')
         self.master = master
         self.master.title('Multipart UI')
 
@@ -90,17 +106,14 @@ class MainUI(ttk.Frame):
         self.master.eval('tk::PlaceWindow %s center'
                          % self.master.winfo_toplevel())
 
-        # Used for configuring styles
-        self.style = ttk.Style()
-
         # Configure area UI components will be placed into
         self.pack(fill=tk.BOTH, expand=True)
 
         # Initialize individual components of the main UI
         self.menu_bar = MenuBar(self.master, self.__window_close_callback)
         self.master.configure(menu=self.menu_bar)
-        self.side_bar = SideBar(self)
-        self.main_area = MainArea(self)
+        self.side_bar = SideBar(self, style='DarkNested.TFrame')
+        self.main_area = MainArea(self, style='DarkNested.TFrame')
 
         # Register event handlers for root window
         self.__register_handlers()
@@ -108,6 +121,22 @@ class MainUI(ttk.Frame):
         # TODO Place components in the main window
         self.side_bar.pack(side=tk.LEFT, fill=tk.Y)
         self.main_area.pack(side=tk.RIGHT, fill=tk.BOTH)
+
+    def __configure_styles(self):
+        # Style for main window frame
+        self.style.configure('DarkMain.TFrame',
+                             background='#2B2B2B')
+
+        # Style for nested frames
+        self.style.configure('DarkNested.TFrame',
+                             background='#2B2B2B')
+
+        # Style for nested frames
+        self.style.configure('DarkHeading.TLabel',
+                             background='#3B3B3B',
+                             foreground='#FFFFFF',
+                             font='tkDefaultFont 16',
+                             anchor=tk.CENTER)
 
     def __register_handlers(self):
         # Handler for window close request
