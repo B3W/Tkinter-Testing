@@ -7,6 +7,10 @@ from tkinter import ttk
 
 class MainUI(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
+        # Used for configuring styles/themes
+        self.style = ttk.Style()
+        self.style.configure('TFrame', bd=2, relief=tk.GROOVE)
+
         # Initialize root window
         ttk.Frame.__init__(self, master, *args, **kwargs)
         self.master = master
@@ -43,7 +47,7 @@ class MainUI(ttk.Frame):
     def __create_frames(self):
         for col in range(self.col_cnt):
             for row in range(self.row_cnt):
-                frame = tk.Frame(self, bd=2, relief=tk.GROOVE)
+                frame = ttk.Frame(self)
                 frame.grid(column=col, row=row,
                            sticky=(tk.N, tk.S, tk.E, tk.W))
 
