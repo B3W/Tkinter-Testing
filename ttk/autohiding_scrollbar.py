@@ -64,7 +64,7 @@ class MainUI(ttk.Frame):
         # Root window grid
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
-        self.master.minsize(width=200, height=150)
+        self.master.minsize(width=200, height=50)
 
         # Root frame grid
         self.columnconfigure(0, weight=1)
