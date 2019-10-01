@@ -11,16 +11,42 @@ class AutoScrollbar(ttk.Scrollbar):
     works if you use the pack geometry manager.
     Reference: https://stackoverflow.com/q/57030781
     '''
+    def __init__(self, master, *args, **kwargs):
+        ttk.Scrollbar.__init__(self, master, *args, **kwargs)
+        self.hidden = False  # Flag tracking if scrollbar visible
+
+        # Initially set the scrollbar visible
+        # Will get reversed in initial 'set' function if necessary
+        self.__show()
+
     def set(self, lo, hi):
         if float(lo) <= 0.0 and float(hi) >= 1.0:
-            self.pack_forget()
+            # Only need to hide if the Scrollbar is currently visible
+            if not self.hidden:
+                self.__hide()
+
         else:
-            if self.cget("orient") == tk.HORIZONTAL:
-                self.pack(side=tk.BOTTOM, fill=tk.X)
-            else:
-                self.pack(side=tk.RIGHT, fill=tk.Y)
+            # Only need to show if the Scrollbar is currently not visible
+            if self.hidden:
+                self.__show()
 
         ttk.Scrollbar.set(self, lo, hi)
+
+    def __show(self):
+        print('Showing Scrollbar')
+        orient = str(self.cget('orient'))
+
+        if orient == tk.HORIZONTAL:
+            self.pack(side=tk.BOTTOM, fill=tk.X)
+        else:
+            self.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.hidden = False
+
+    def __hide(self):
+        print('Hiding Scrollbar')
+        self.pack_forget()
+        self.hidden = True
 
     def grid(self, **kw):
         raise(tk.TclError, "cannot use grid with this widget")
