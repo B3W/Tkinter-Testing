@@ -4,7 +4,7 @@ Prints all attributes for the inputted widget if it exists
 import tkinter as tk
 from tkinter import ttk
 
-ATTR_COL_WIDTH = 20
+ATTR_COL_WIDTH = 25
 TYPE_COL_WIDTH = 30
 TK_MAP = {
     'button': tk.Button,
